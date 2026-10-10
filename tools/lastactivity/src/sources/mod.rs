@@ -1,6 +1,8 @@
 mod eventlog;
+mod opensave;
 mod prefetch;
 mod recent;
+mod shellbags;
 mod uninstall;
 
 use crate::model::Activity;
@@ -14,10 +16,12 @@ pub struct Collection {
 
 /// Liest alle Quellen parallel und liefert die Einträge neueste zuerst.
 pub fn collect_all() -> Collection {
-    let sources: [fn(&mut Collection); 4] = [
+    let sources: [fn(&mut Collection); 6] = [
         eventlog::collect,
         prefetch::collect,
         recent::collect,
+        shellbags::collect,
+        opensave::collect,
         uninstall::collect,
     ];
     let parts: Vec<Collection> = std::thread::scope(|scope| {

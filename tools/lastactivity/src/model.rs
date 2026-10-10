@@ -6,6 +6,8 @@ pub enum Kind {
     ProgramRun,
     FileOpened,
     FolderOpened,
+    FolderViewed,
+    FileSelected,
     SoftwareInstalled,
     SystemStart,
     SystemShutdown,
@@ -28,10 +30,12 @@ pub enum Kind {
 }
 
 impl Kind {
-    pub const ALL: [Kind; 22] = [
+    pub const ALL: [Kind; 24] = [
         Kind::ProgramRun,
         Kind::FileOpened,
         Kind::FolderOpened,
+        Kind::FolderViewed,
+        Kind::FileSelected,
         Kind::SoftwareInstalled,
         Kind::SystemStart,
         Kind::SystemShutdown,
@@ -58,6 +62,8 @@ impl Kind {
             Kind::ProgramRun => "Programm gestartet",
             Kind::FileOpened => "Datei geöffnet",
             Kind::FolderOpened => "Ordner geöffnet",
+            Kind::FolderViewed => "Ordner im Explorer angesehen",
+            Kind::FileSelected => "Datei in Öffnen/Speichern-Dialog gewählt",
             Kind::SoftwareInstalled => "Software installiert",
             Kind::SystemStart => "System gestartet",
             Kind::SystemShutdown => "System heruntergefahren",

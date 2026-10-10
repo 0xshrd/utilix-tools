@@ -9,8 +9,8 @@ use windows::Win32::Foundation::{HLOCAL, LocalFree};
 use windows::Win32::Security::Authorization::ConvertStringSidToSidW;
 use windows::Win32::Security::{LookupAccountSidW, PSID, SID_NAME_USE};
 use windows::Win32::System::EventLog::{
-    EVT_HANDLE, EvtClose, EvtNext, EvtQuery, EvtQueryChannelPath, EvtQueryReverseDirection,
-    EvtRender, EvtRenderEventXml,
+    EVT_HANDLE, EvtClose, EvtNext, EvtQuery, EvtQueryChannelPath, EvtQueryFilePath,
+    EvtQueryReverseDirection, EvtRender, EvtRenderEventXml,
 };
 use windows::core::{PCWSTR, PWSTR};
 
@@ -87,7 +87,7 @@ const QUERIES: &[Query] = &[
 pub fn collect(out: &mut Collection) {
     let mut accounts = HashMap::new();
     for q in QUERIES {
-        match query(q.channel, q.xpath) {
+        match query(q.channel, q.xpath, EvtQueryChannelPath.0) {
             Ok(events) => {
                 out.activities.extend(
                     events
@@ -100,6 +100,37 @@ pub fn collect(out: &mut Collection) {
                     .push(format!("Ereignisprotokoll {}: {e}", q.channel));
             }
             Err(_) => {}
+        }
+    }
+    collect_archives(out, &mut accounts);
+}
+
+/// Archivierte Protokolle (Archive-<Kanal>-<Datum>.evtx), falls Windows so konfiguriert ist.
+fn collect_archives(out: &mut Collection, accounts: &mut HashMap<String, String>) {
+    let dir = std::path::PathBuf::from(
+        std::env::var("SystemRoot").unwrap_or_else(|_| r"C:\Windows".into()),
+    )
+    .join(r"System32\winevt\Logs");
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let file = entry.file_name().to_string_lossy().into_owned();
+        let Some(q) = QUERIES
+            .iter()
+            .find(|q| file.starts_with(&format!("Archive-{}-", q.channel.replace('/', "%4"))))
+        else {
+            continue;
+        };
+        let path = entry.path().to_string_lossy().into_owned();
+        let Ok(events) = query(&path, q.xpath, EvtQueryFilePath.0) else {
+            continue;
+        };
+        for ev in &events {
+            if let Some(mut activity) = convert(q.channel, ev, accounts) {
+                activity.source = format!("Archiv {file} (ID {})", ev.id);
+                out.activities.push(activity);
+            }
         }
     }
 }
@@ -261,10 +292,11 @@ fn first_non_empty(values: &[&str]) -> String {
         .to_string()
 }
 
-fn query(channel: &str, xpath: &str) -> Result<Vec<RawEvent>, String> {
-    let channel_w = wide(channel);
+/// `path` ist ein Kanalname (EvtQueryChannelPath) oder eine .evtx-Datei (EvtQueryFilePath).
+fn query(path: &str, xpath: &str, kind: u32) -> Result<Vec<RawEvent>, String> {
+    let channel_w = wide(path);
     let xpath_w = wide(xpath);
-    let flags = EvtQueryChannelPath.0 | EvtQueryReverseDirection.0;
+    let flags = kind | EvtQueryReverseDirection.0;
     let result = unsafe {
         EvtQuery(
             None,

@@ -3,6 +3,8 @@
 mod app;
 mod export;
 mod model;
+mod reg;
+mod shellitem;
 mod sources;
 mod util;
 

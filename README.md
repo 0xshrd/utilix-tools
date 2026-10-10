@@ -22,7 +22,12 @@ Liest lokal und nur lesend:
 | Ereignisprotokolle (System, Application, NetworkProfile, WLAN-AutoConfig, TaskScheduler) | Start, Herunterfahren, unerwarteter Neustart, Energiesparmodus, An-/Abmeldung, Absturz, Hänger, Bluescreen, Windows Installer, Wiederherstellungspunkt, Netzwerk/WLAN, geplante Aufgaben |
 | Prefetch (`C:\Windows\Prefetch`, braucht Adminrechte) | Programmstarts mit bis zu 8 Zeitpunkten pro Programm |
 | Zuletzt verwendet (`%APPDATA%\Microsoft\Windows\Recent`) | Geöffnete Dateien und Ordner |
+| ShellBags (Registry, `BagMRU`) | Im Explorer angesehene Ordner, auch auf USB-Laufwerken und in ZIP-Archiven |
+| Öffnen/Speichern-Dialoge (Registry, `OpenSavePidlMRU`) | Zuletzt gewählte Datei je Dateiendung |
 | Registry (Uninstall-Schlüssel) | Installierte Software |
+| Archivierte Ereignisprotokolle (`Archive-*.evtx`) | wie oben, falls Windows Protokolle archiviert |
+
+Zeitpunkte aus der Registry (ShellBags, Dialoge) sind die letzte Schreibzeit des Schlüssels und daher Näherungswerte.
 
 Export ohne Oberfläche: `lastactivity.exe --csv aktivitaet.csv --json aktivitaet.json --html bericht.html`
 
@@ -31,8 +36,10 @@ Export ohne Oberfläche: `lastactivity.exe --csv aktivitaet.csv --json aktivitae
 Fertige Versionen liegen unter [Releases](https://github.com/0xshrd/utilix-tools/releases), jeweils als ZIP mit `SHA256SUMS.txt`. Prüfen:
 
 ```powershell
-Get-FileHash .\netscope-v0.1.0-x64.zip -Algorithm SHA256
+Get-FileHash .\lastactivity-v0.1.0-x64.zip -Algorithm SHA256
 ```
+
+Die Programme sind noch nicht digital signiert. Windows SmartScreen kann deshalb beim ersten Start warnen („Weitere Informationen“ → „Trotzdem ausführen“).
 
 ## Selbst bauen
 
@@ -70,3 +77,5 @@ Dieses Programm überträgt keine Informationen an andere vernetzte Systeme, es 
 ## Lizenz
 
 [GPL-3.0-or-later](LICENSE). Copyright © utilix contributors.
+
+Mitgelieferte Schriften: [Geist und Geist Mono](https://github.com/vercel/geist-font) unter der [SIL Open Font License 1.1](assets/fonts/OFL.txt). Icons: [Phosphor](https://phosphoricons.com) (MIT) über `egui-phosphor`.
