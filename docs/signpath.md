@@ -4,11 +4,11 @@ Bedingungen: https://signpath.org/terms · Antrag: https://signpath.org/apply
 
 ## Vor dem Antrag
 
-- [ ] Repo `0xshrd/utilix-tools` ist öffentlich, `LICENSE` ist GPLv3, keine proprietären Bestandteile.
+- [x] Repo `0xshrd/utilix-tools` ist öffentlich, `LICENSE` ist GPLv3, keine proprietären Bestandteile.
 - [ ] Mindestens ein Tool funktioniert und ist als GitHub-Release veröffentlicht (unsigniert).
 - [ ] Nachweisbare Reputation: Downloads, Sterne, Erwähnungen. Ohne die lehnt SignPath ausführbare Programme ab.
 - [ ] Funktionsbeschreibung auf der Download-Seite (README und Website).
-- [ ] Zwei-Faktor-Authentifizierung für alle Mitglieder von `0xshrd` aktiv, in der Organisation erzwungen.
+- [x] Zwei-Faktor-Authentifizierung für alle Mitglieder von `0xshrd` aktiv, in der Organisation erzwungen.
 - [ ] Branch-Schutz für `main`: Pull Requests von Externen brauchen ein Review.
 - [ ] `Cargo.lock` committet, damit Builds reproduzierbar sind.
 - [ ] Keine Funktionen, die Schwachstellen suchen/ausnutzen oder Sicherheitsmaßnahmen umgehen.
@@ -17,6 +17,10 @@ Bedingungen: https://signpath.org/terms · Antrag: https://signpath.org/apply
 
 - [ ] In `src/data/site.ts` `codeSigningPolicy` auf `true` setzen, sobald die Zusage da ist.
       Dann erscheinen Abschnitt „Code signing policy“, SignPath-Hinweis, Rollen und Datenschutzaussage auf der Startseite.
+
+## Team
+
+- Aaron ([grrtbow](https://github.com/grrtbow)) und Tom ([markmarkinson](https://github.com/markmarkinson)): Committer, Reviewer und Approver (beide Owner von `0xshrd`).
 
 ## Nach der Zusage
 
