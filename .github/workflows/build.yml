@@ -21,7 +21,9 @@ jobs:
       # Toolchain kommt aus rust-toolchain.toml
       - run: rustup show active-toolchain || rustup toolchain install
 
-      - run: cargo build --release --workspace
+      - run: cargo clippy --workspace --locked -- -D warnings
+
+      - run: cargo build --release --workspace --locked
 
       - name: Binaries sammeln
         shell: pwsh

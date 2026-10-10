@@ -10,7 +10,7 @@ Bedingungen: https://signpath.org/terms · Antrag: https://signpath.org/apply
 - [ ] Funktionsbeschreibung auf der Download-Seite (README und Website).
 - [x] Zwei-Faktor-Authentifizierung für alle Mitglieder von `0xshrd` aktiv, in der Organisation erzwungen.
 - [ ] Branch-Schutz für `main`: Pull Requests von Externen brauchen ein Review.
-- [ ] `Cargo.lock` committet, damit Builds reproduzierbar sind.
+- [x] `Cargo.lock` committet, damit Builds reproduzierbar sind.
 - [ ] Keine Funktionen, die Schwachstellen suchen/ausnutzen oder Sicherheitsmaßnahmen umgehen.
 
 ## Website (0xshrd/utilix)

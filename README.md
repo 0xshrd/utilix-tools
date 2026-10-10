@@ -8,9 +8,23 @@ Website: https://utils.grand-analytics.de · Quellcode der Website: [0xshrd/util
 
 | Tool | Aufgabe | Stand |
 | --- | --- | --- |
-| NetScope | Offene Ports & Verbindungen mit Prozess, Remote-Host und Datenrate | in Arbeit |
+| LastActivity | Zeitachse der PC-Nutzung: Programmstarts, geöffnete Dateien, Start/Herunterfahren, Anmeldungen, Abstürze, Netzwerk, Installationen | in Arbeit |
+| NetScope | Offene Ports & Verbindungen mit Prozess, Remote-Host und Datenrate | geplant |
 
-Weitere Tools (WifiLens, DNSWatch, ProcPeek, EventGlass, CrashView, USBTrail, BlueScan, DriveDeck, LastActivity, FileTrace) sind geplant.
+Weitere Tools (WifiLens, DNSWatch, ProcPeek, EventGlass, CrashView, USBTrail, BlueScan, DriveDeck, FileTrace) sind geplant.
+
+### LastActivity
+
+Liest lokal und nur lesend:
+
+| Quelle | Aktionen |
+| --- | --- |
+| Ereignisprotokolle (System, Application, NetworkProfile, WLAN-AutoConfig, TaskScheduler) | Start, Herunterfahren, unerwarteter Neustart, Energiesparmodus, An-/Abmeldung, Absturz, Hänger, Bluescreen, Windows Installer, Wiederherstellungspunkt, Netzwerk/WLAN, geplante Aufgaben |
+| Prefetch (`C:\Windows\Prefetch`, braucht Adminrechte) | Programmstarts mit bis zu 8 Zeitpunkten pro Programm |
+| Zuletzt verwendet (`%APPDATA%\Microsoft\Windows\Recent`) | Geöffnete Dateien und Ordner |
+| Registry (Uninstall-Schlüssel) | Installierte Software |
+
+Export ohne Oberfläche: `lastactivity.exe --csv aktivitaet.csv --json aktivitaet.json --html bericht.html`
 
 ## Download
 

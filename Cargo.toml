@@ -14,6 +14,8 @@ homepage = "https://utils.grand-analytics.de"
 winresource = "0.1"
 
 [profile.release]
+# Auf Größe optimiert: die Tools sollen schlank bleiben.
+opt-level = "s"
 lto = true
 codegen-units = 1
 strip = true
