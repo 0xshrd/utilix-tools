@@ -13,15 +13,23 @@ use std::collections::HashSet;
 use std::sync::Arc;
 use std::sync::mpsc::{self, Receiver};
 
-/// Farben der utilix-Tools. Eine durchgehende grüne Fläche, Abstufung nur über Linien.
+/// Farben der utilix-Tools: abgestufte, aber jeweils einfarbige Grünflächen (keine Verläufe).
 mod theme {
     use eframe::egui::Color32;
 
-    pub const BG: Color32 = Color32::from_rgb(0x12, 0x2A, 0x1C);
-    pub const LINE: Color32 = Color32::from_rgb(0x22, 0x40, 0x2D);
-    pub const LINE_STRONG: Color32 = Color32::from_rgb(0x34, 0x5C, 0x40);
-    pub const HOVER: Color32 = Color32::from_rgb(0x18, 0x35, 0x24);
-    pub const SELECTED: Color32 = Color32::from_rgb(0x1F, 0x41, 0x2C);
+    /// Titel- und Werkzeugleiste
+    pub const CHROME: Color32 = Color32::from_rgb(0x13, 0x2B, 0x1E);
+    /// Tabelle und Statuszeile
+    pub const BG: Color32 = Color32::from_rgb(0x0F, 0x22, 0x18);
+    /// Band des Tabellenkopfs
+    pub const HEADER: Color32 = Color32::from_rgb(0x17, 0x33, 0x24);
+    pub const HEADER_LINE: Color32 = Color32::from_rgb(0x3F, 0x72, 0x52);
+    /// Eingabefelder und Segment-Filter
+    pub const FIELD: Color32 = Color32::from_rgb(0x0B, 0x1B, 0x12);
+    pub const LINE: Color32 = Color32::from_rgb(0x1B, 0x35, 0x27);
+    pub const LINE_STRONG: Color32 = Color32::from_rgb(0x2C, 0x4E, 0x39);
+    pub const HOVER: Color32 = Color32::from_rgb(0x15, 0x2E, 0x21);
+    pub const SELECTED: Color32 = Color32::from_rgb(0x1C, 0x3C, 0x2A);
     pub const ACCENT: Color32 = Color32::from_rgb(0xBF, 0xCF, 0x5B);
     pub const ON_ACCENT: Color32 = Color32::from_rgb(0x0E, 0x33, 0x0D);
     pub const TEXT: Color32 = Color32::from_rgb(0xE6, 0xEE, 0xE4);
@@ -461,9 +469,10 @@ impl App {
             .collect();
         let (outer, _) =
             ui.allocate_exact_size(vec2(widths.iter().sum::<f32>() + 8.0, 38.0), Sense::hover());
-        ui.painter().rect_stroke(
+        ui.painter().rect(
             outer,
             10.0,
+            FIELD,
             Stroke::new(1.0, LINE_STRONG),
             StrokeKind::Inside,
         );
@@ -501,9 +510,10 @@ impl App {
         let (rect, _) = ui.allocate_exact_size(vec2(320.0, 38.0), Sense::hover());
         let search_id = Id::new("search");
         let focused = ui.memory(|m| m.has_focus(search_id));
-        ui.painter().rect_stroke(
+        ui.painter().rect(
             rect,
             10.0,
+            FIELD,
             Stroke::new(1.0, if focused { ACCENT } else { LINE_STRONG }),
             StrokeKind::Inside,
         );
@@ -548,7 +558,7 @@ impl App {
                 .id(search_id)
                 .frame(egui::Frame::NONE)
                 .margin(Margin::ZERO)
-                .font(sans(14.0))
+                .font(sans(13.5))
                 .text_color(TEXT)
                 .hint_text(RichText::new("Aktivitäten durchsuchen").color(DIM))
                 .desired_width(edit_rect.width()),
@@ -630,10 +640,11 @@ impl App {
 
         // Kopfzeile
         let (header, _) = ui.allocate_exact_size(vec2(width, 48.0), Sense::hover());
+        ui.painter().rect_filled(header, 0.0, HEADER);
         ui.painter().hline(
             header.x_range(),
             header.bottom() - 0.5,
-            Stroke::new(1.0, LINE_STRONG),
+            Stroke::new(1.5, HEADER_LINE),
         );
         for (&(title, key, _), &(x, w)) in COLUMNS.iter().zip(&columns) {
             let cell = Rect::from_min_size(pos2(x, header.top()), vec2(w, header.height()));
@@ -821,21 +832,22 @@ impl eframe::App for App {
         let ctx = ui.ctx().clone();
         self.resize_handles(&ctx);
 
-        let bar = |margin: Margin| egui::Frame::new().fill(BG).inner_margin(margin);
+        let bar =
+            |fill: Color32, margin: Margin| egui::Frame::new().fill(fill).inner_margin(margin);
         egui::Panel::top("titlebar")
             .exact_size(44.0)
-            .frame(bar(Margin::ZERO))
+            .frame(bar(CHROME, Margin::ZERO))
             .show(ui, |ui| self.title_bar(ui));
         egui::Panel::top("toolbar")
-            .exact_size(72.0)
-            .frame(bar(Margin::symmetric(24, 0)))
+            .exact_size(66.0)
+            .frame(bar(CHROME, Margin::symmetric(24, 0)))
             .show(ui, |ui| self.toolbar(ui));
         egui::Panel::bottom("statusbar")
             .exact_size(30.0)
-            .frame(bar(Margin::ZERO))
+            .frame(bar(BG, Margin::ZERO))
             .show(ui, |ui| self.status_bar(ui));
         egui::CentralPanel::default()
-            .frame(bar(Margin::ZERO))
+            .frame(bar(BG, Margin::ZERO))
             .show(ui, |ui| self.table(ui));
     }
 }
@@ -864,6 +876,10 @@ fn draw_row(
         )
     };
 
+    // Inaktive Einträge (Herunterfahren, Abmelden, Trennen …) wirken abgeblendet.
+    let color = kind_color(a.kind);
+    let inactive = color == DIM;
+
     // Beschreibung mit Icon-Kachel
     let c0 = cell(0);
     let tile = Rect::from_min_size(pos2(c0.left(), rect.center().y - 13.0), vec2(26.0, 26.0));
@@ -873,14 +889,19 @@ fn draw_row(
         Align2::CENTER_CENTER,
         kind_icon(a.kind),
         icon_font(14.0),
-        MUTED,
+        if inactive { DIM } else { MUTED },
     );
     let description = Rect::from_min_max(pos2(tile.right() + 12.0, c0.top()), c0.max);
-    cell_label(ui, description, &a.description, sans(14.0), TEXT);
+    cell_label(
+        ui,
+        description,
+        &a.description,
+        sans(13.5),
+        if inactive { MUTED } else { TEXT },
+    );
 
     // Aktion mit Statuspunkt
     let c1 = cell(1);
-    let color = kind_color(a.kind);
     ui.painter()
         .circle_filled(pos2(c1.left() + 3.0, rect.center().y), 3.0, color);
     let label_rect = Rect::from_min_max(pos2(c1.left() + 12.0, c1.top()), c1.max);
@@ -888,13 +909,13 @@ fn draw_row(
         ui,
         label_rect,
         a.kind.label(),
-        mono(12.0),
-        if color == DIM { MUTED } else { TEXT },
+        mono(11.5),
+        if inactive { DIM } else { TEXT },
     );
 
-    cell_label(ui, cell(2), &a.local_time(), mono(12.0), MUTED);
-    cell_label(ui, cell(3), &a.details, mono(12.0), MUTED);
-    cell_label(ui, cell(4), &a.source, mono(12.0), DIM);
+    cell_label(ui, cell(2), &a.local_time(), mono(11.5), MUTED);
+    cell_label(ui, cell(3), &a.details, mono(11.5), MUTED);
+    cell_label(ui, cell(4), &a.source, mono(11.5), DIM);
 
     response.context_menu(|ui| row_menu(ui, a));
     response
@@ -1036,13 +1057,15 @@ fn apply_style(ctx: &egui::Context) {
     ctx.set_theme(egui::Theme::Dark);
     ctx.all_styles_mut(|style| {
         style.interaction.selectable_labels = false;
+        style.spacing.scroll = egui::style::ScrollStyle::solid();
+        style.spacing.scroll.bar_width = 8.0;
         style.spacing.button_padding = vec2(10.0, 5.0);
         style.spacing.menu_margin = Margin::same(8);
 
         let v = &mut style.visuals;
         *v = egui::Visuals::dark();
         v.panel_fill = BG;
-        v.window_fill = BG;
+        v.window_fill = CHROME;
         v.extreme_bg_color = BG;
         v.faint_bg_color = HOVER;
         v.window_stroke = Stroke::new(1.0, LINE_STRONG);
