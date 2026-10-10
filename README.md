@@ -36,7 +36,7 @@ Export ohne Oberfläche: `lastactivity.exe --csv aktivitaet.csv --json aktivitae
 Fertige Versionen liegen unter [Releases](https://github.com/0xshrd/utilix-tools/releases), jeweils als ZIP mit `SHA256SUMS.txt`. Prüfen:
 
 ```powershell
-Get-FileHash .\lastactivity-v0.1.0-x64.zip -Algorithm SHA256
+Get-FileHash .\lastactivity-v0.1.1-x64.zip -Algorithm SHA256
 ```
 
 Die Programme sind noch nicht digital signiert. Windows SmartScreen kann deshalb beim ersten Start warnen („Weitere Informationen“ → „Trotzdem ausführen“).
