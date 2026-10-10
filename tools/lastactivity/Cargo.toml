@@ -10,13 +10,11 @@ homepage.workspace = true
 [dependencies]
 chrono = "0.4.45"
 eframe = "0.36.2"
-egui-phosphor = "0.14.0"
 egui_extras = "0.36.2"
-raw-window-handle = "0.6"
 rfd = "0.17.2"
 roxmltree = "0.21.1"
 serde_json = "1.0.152"
-windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_Graphics_Dwm", "Win32_Security", "Win32_Security_Authorization", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_EventLog", "Win32_System_Registry", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Wdk_Storage_FileSystem"] }
+windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_Security", "Win32_Security_Authorization", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_EventLog", "Win32_System_Registry", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Wdk_Storage_FileSystem"] }
 
 [build-dependencies]
 winresource.workspace = true

@@ -77,5 +77,3 @@ Dieses Programm überträgt keine Informationen an andere vernetzte Systeme, es 
 ## Lizenz
 
 [GPL-3.0-or-later](LICENSE). Copyright © utilix contributors.
-
-Mitgelieferte Schriften: [Geist und Geist Mono](https://github.com/vercel/geist-font) unter der [SIL Open Font License 1.1](assets/fonts/OFL.txt). Icons: [Phosphor](https://phosphoricons.com) (MIT) über `egui-phosphor`.
